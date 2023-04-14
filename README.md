@@ -1,6 +1,6 @@
 # av100
 
-This template should help get you started developing with Vue 3 in Vite.
+Create test work, using vue.js, vue-router, pinia and rest api(axios)
 
 ## Recommended IDE Setup
 
