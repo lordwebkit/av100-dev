@@ -1,29 +1,33 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import AuthorizationForm from '../views/AuthorizationForm.vue'
-import UserSettings from '../views/userSettings.vue'
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(import.meta.env.VUE_APP_BASE_URL),
   routes: [
     {
       path: '/',
       name: 'authorization',
-      component: AuthorizationForm
+      component: () => import('@/views/AuthorizationForm.vue'),
+      beforeEnter: authorize(false)
     },
     {
       path: '/settings',
       name: 'settings',
-      component: UserSettings,
-      beforeEnter(to, from, next) {
-        const isAuthorization = ""
-        if (isAuthorization) {
-          next();
-        } else {
-          next({name: 'authorization'})
-        }
-      }
+      component: () => import('@/views/UserSettings.vue'),
+      beforeEnter: authorize(true)
     }
   ]
 })
+
+function authorize(requireAuth) {
+  return (to, from, next) => {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    const isAuthorized = Boolean(userData)
+    if (requireAuth ? isAuthorized : !isAuthorized) {
+      next()
+    } else {
+      next({ name: requireAuth ? 'authorization' : 'settings' })
+    }
+  }
+}
 
 export default router
