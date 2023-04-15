@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import router from '../router';
 import axios from 'axios';
 
 const loginUrl = 'https://api.av100.ru/v3/login';
@@ -9,7 +10,7 @@ const deviceOS = 'windows';
 export const useUserStore = defineStore('user', {
   state: () => ({
     authData: {},
-    userData: {}
+    userData: JSON.parse(localStorage.getItem('userData')) || {}
   }),
   getters: {
     getUserData: (state) => state.userData,
@@ -42,15 +43,11 @@ export const useUserStore = defineStore('user', {
         };
         const response = await axios.get(`${getUserUrl}${this.authData.user?.id}`, { headers });
         this.userData = response.data;
-        console.log(this.userData);
+        localStorage.setItem('userData', JSON.stringify(response.data))
+        router.push('/settings')
       } catch (err) {
         console.error(err);
       }
     }
   },
 });
-
-
-// login: '89381282102',
-// password: '4384870146',
-// fromuser: 2011830
