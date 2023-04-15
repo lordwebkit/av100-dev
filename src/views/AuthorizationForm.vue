@@ -1,6 +1,7 @@
 <script setup>
 import { useUserStore } from '@/stores/user'
-
+import ABtn from '@/components/ABtn.vue';
+import ACheckbox from '@/components/ACheckbox.vue';
 const store = useUserStore()
 </script>
 <template>
@@ -22,12 +23,11 @@ const store = useUserStore()
               placeholder="Введите пароль" v-model="authorizationData.password">
           </div>
           <div class="autorization-form__agree af-agree">
-            <input type="checkbox" class="af-agree__checkbox" id="af-agree__checkbox" checked>
-            <label for="af-agree__checkbox"></label>
+            <ACheckbox checkboxId="af-agree__checkbox" checkboxChecked="true" />
             <p class="af-agree__text">Я согласен c договором оферты</p>
           </div>
           <div class="autorization-form__footer af-footer">
-            <button class="af-footer__btn" @click.prevent="store.authorization(this.authorizationData)">Войти</button>
+            <ABtn @click.prevent="store.authorization(this.authorizationData)">Войти</ABtn>
             <p class="af-footer__text">Нет аккаунта? <span class="af-footer__sign-in">Зарегистрироваться</span></p>
           </div>
         </div>
@@ -45,19 +45,10 @@ export default {
         password: ""
       }
     }
-  },
-  methods: {
-    hi() {
-      console.log(this.authorizationData)
-    }
-  },
-  mounted() {
-  },
+  }
 }
 </script>
-<style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
-
+<style lang="scss" scoped>
 .autorization {
   background-image: url("@/assets/autorization-bg.jpg");
   height: 100vh;
@@ -111,12 +102,10 @@ export default {
     transition: all .3s;
     width: 100%;
     font-family: Montserrat, sans-serif;
-
   }
 }
 
 .af {
-
   &-header {
     &__title {
       color: #000;
@@ -144,26 +133,6 @@ export default {
   &-agree {
     display: flex;
 
-    &__checkbox {
-      position: absolute;
-      z-index: -1;
-      opacity: 0;
-    }
-
-    &__checkbox+label {
-      position: relative;
-      border: 1px solid #2dc574;
-      border-radius: 0.2rem;
-      height: 1.8rem;
-      width: 1.8rem;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-
-    &__checkbox:checked+label {
-      background: #2dc574 url("@/assets/icons/checked.svg") 50% 30% no-repeat;
-    }
-
     &__text {
       font-size: 1.4rem;
       font-weight: 500;
@@ -172,35 +141,6 @@ export default {
 
   &-footer {
     text-align: center;
-
-    &__btn {
-      width: 100%;
-      background: #2dc574;
-      border: 0.1rem solid transparent;
-      border-radius: 0.4rem;
-      color: #fff;
-      cursor: pointer;
-      display: inline-block;
-      font-family: inherit;
-      font-size: 1.3rem;
-      font-weight: 600;
-      line-height: 1.1;
-      outline: none;
-      padding: 1.3rem 2rem;
-      text-align: center;
-      transition: all .3s;
-      user-select: none;
-      white-space: nowrap;
-      margin-bottom: 15px;
-
-      &:hover {
-        background: #26a763;
-      }
-
-      &:active {
-        background: #229457;
-      }
-    }
 
     &__text {
       font-size: 1.4rem;
