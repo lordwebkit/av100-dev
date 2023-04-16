@@ -20,8 +20,8 @@ const router = createRouter({
 
 function authorize(requireAuth) {
   return (to, from, next) => {
-    const userData = JSON.parse(localStorage.getItem('userData'))
-    const isAuthorized = Boolean(userData)
+    const authData = JSON.parse(localStorage.getItem('authData'))
+    const isAuthorized = Boolean(authData)
     if (requireAuth ? isAuthorized : !isAuthorized) {
       next()
     } else {
