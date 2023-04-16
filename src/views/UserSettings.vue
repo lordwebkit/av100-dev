@@ -2,6 +2,11 @@
 import ABtn from '@/components/ABtn.vue';
 import ACheckbox from '@/components/ACheckbox.vue';
 import ATooltip from '@/components/ATooltip.vue';
+import ASelect from '@/components/ASelect.vue'
+import { useUserStore } from '../stores/user';
+
+const store = useUserStore();
+store.setUserData();
 </script>
 <template>
   <section class="user-settings">
@@ -9,16 +14,18 @@ import ATooltip from '@/components/ATooltip.vue';
       <div class="user-settings__subsection setting">
         <h3 class="setting__header">Прочие настройки</h3>
         <div class="setting__body setting-body">
-          <ABtn class="setting-body__btn">Сохранить</ABtn>
+          <ABtn class="setting-body__btn" @click="store.sendUserData">Сохранить</ABtn>
           <span class="setting-body__hr"></span>
           <div class="setting-body__field setting-body__field--top">
-            <ACheckbox type="checkbox" class="setting-body__checkbox-input" checkboxId="setting-body__checkbox-color" />
-            <label class="setting-body__checkbox-label" for="setting-body__checkbox-color">Включить цвета в ленте</label>
+            <ACheckbox type="checkbox" class="setting-body__checkbox-input" checkboxId="setting-body__checkbox-color"
+              :checkboxChecked="store.getUserData.colorlenta" :setCheckbox="store.setColorLenta" />
+            <label class="setting-body__checkbox-label" for="setting-body__checkbox-color"
+              @click="store.setColorLenta">Включить цвета в ленте</label>
             <ATooltip>Включение зеленого/желтого цвета</ATooltip>
           </div>
           <div class="setting-body__field">
             <ACheckbox type="checkbox" class="setting-body__checkbox-input" checkboxId="setting-body__checkbox-auto"
-              checkboxChecked="true" />
+              :checkboxChecked="!store.getUserData.locklentaupdate" :setCheckbox="store.setLockLentaUpdate" />
             <label class="setting-body__checkbox-label" for="setting-body__checkbox-auto">
               Автоматически переходить к новым объявлениям
             </label>
@@ -26,18 +33,8 @@ import ATooltip from '@/components/ATooltip.vue';
           </div>
           <div class="setting-body__field">
             <label class="setting-body__select-label" for="setting-body__select-sity">Часовой пояс</label>
-            <select name="sity" class="setting-body__select-input" id="setting-body__select-sity">
-              <option value="Калининград">Калининград</option>
-              <option value="Москва" selected>Москва</option>
-              <option value="Самара">Самара</option>
-              <option value="Омск">Омск</option>
-              <option value="Красноярск">Красноярск</option>
-              <option value="Иркутск">Иркутск</option>
-              <option value="Якутск">Якутск</option>
-              <option value="Владивосток">Владивосток</option>
-              <option value="Магадан">Магадан</option>
-              <option value="Камчатка">Камчатка</option>
-            </select>
+            <ASelect :selectedSelect="store.getUserData.timezonestring" :setSelectedSelect="store.setTimezone"
+              class="setting-body__select-input" id="setting-body__select-sity" />
           </div>
         </div>
       </div>
@@ -46,21 +43,24 @@ import ATooltip from '@/components/ATooltip.vue';
         <div class="setting__body setting-body other-setting">
           <div class="setting-body__field other-setting__top">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-source"
-              name="setting-body__other-setting">
+              name="setting-body__other-setting" :checked="store.userData.redirecttarget === 2" value="2"
+              @click="store.setRedirectTarget">
             <label class="setting-body__radio-label" for="setting-body__radio-source">На источник</label>
             <ATooltip>Прямой переход в объявление на источнике</ATooltip>
           </div>
           <span class="setting-body__hr setting-body__hr--short"></span>
           <div class="setting-body__field other-setting__middle">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-seperate-window"
-              name="setting-body__other-setting">
+              name="setting-body__other-setting" :checked="store.userData.redirecttarget === 1" value="1"
+              @click="store.setRedirectTarget">
             <label class="setting-body__radio-label" for="setting-body__radio-seperate-window">В карточку в отдельном
               окне</label>
           </div>
           <span class="setting-body__hr setting-body__hr--short"></span>
           <div class="setting-body__field other-setting__bottom">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-current-window"
-              name="setting-body__other-setting" checked>
+              name="setting-body__other-setting" :checked="store.userData.redirecttarget === 0" value="0"
+              @click="store.setRedirectTarget">
             <label class="setting-body__radio-label" for="setting-body__radio-current-window">В карточку в текущем
               окне</label>
           </div>
@@ -74,26 +74,30 @@ import ATooltip from '@/components/ATooltip.vue';
         <div class="setting__body setting-body other-setting">
           <div class="setting-body__field other-setting__top">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-telegram"
-              name="setting-body__nostification">
+              name="setting-body__nostification" :checked="store.userData.notifytypestring === 'telegram'"
+              value="telegram" @click="store.setNotifyType">
             <label class="setting-body__radio-label" for="setting-body__radio-telegram">Telegram ID</label>
           </div>
           <span class="setting-body__hr setting-body__hr--short"></span>
           <div class="setting-body__field other-setting__middle">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-email"
-              name="setting-body__nostification">
+              name="setting-body__nostification" :checked="store.userData.notifytypestring === 'email'" value="email"
+              @click="store.setNotifyType">
             <label class="setting-body__radio-label" for="setting-body__radio-email">Email</label>
           </div>
           <span class="setting-body__hr setting-body__hr--short"></span>
           <div class="setting-body__field other-setting__bottom">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-push"
-              name="setting-body__nostification">
+              name="setting-body__nostification" :checked="store.userData.notifytypestring === 'push'" value="push"
+              @click="store.setNotifyType">
             <label class="setting-body__radio-label" for="setting-body__radio-push">Push</label>
             <ATooltip>Прямой переход в объявление на источнике</ATooltip>
           </div>
           <span class="setting-body__hr setting-body__hr--short"></span>
           <div class="setting-body__field other-setting__bottom">
             <input type="radio" class="setting-body__radio-input" id="setting-body__radio-off"
-              name="setting-body__nostification" checked>
+              name="setting-body__nostification" :checked="store.userData.notifytypestring === 'off'" value="off"
+              @click="store.setNotifyType">
             <label class="setting-body__radio-label" for="setting-body__radio-off">Выкл</label>
           </div>
           <h4 class="setting-body__title">Уведомления</h4>
@@ -109,25 +113,25 @@ import ATooltip from '@/components/ATooltip.vue';
           <div class="setting-body__field">
             <label class="setting-body__account-label">Фамилия</label>
             <div class="">
-              <input type="input" class="setting-body__account-input">
+              <input type="input" class="setting-body__account-input" :value="store.userData.lname" @input="store.setLastName">
               <span class="setting-body__account-info">* Не обязательно</span>
             </div>
           </div>
           <div class="setting-body__field">
             <label class="setting-body__account-label">Имя</label>
-            <input type="input" class="setting-body__account-input">
+            <input type="input" class="setting-body__account-input" :value="store.userData.fname" readonly>
           </div>
           <div class="setting-body__field">
             <label class="setting-body__account-label">Номер телефона</label>
-            <input type="input" class="setting-body__account-input">
+            <input type="input" class="setting-body__account-input" :value="store.userData.phone" @input="store.setPhone">
           </div>
           <div class="setting-body__field">
             <label class="setting-body__account-label">Логин</label>
-            <input type="input" class="setting-body__account-input">
+            <input type="input" class="setting-body__account-input" :value="store.userData.login" readonly>
           </div>
           <div class="setting-body__field">
             <label class="setting-body__account-label">Компания</label>
-            <input type="input" class="setting-body__account-input">
+            <input type="input" class="setting-body__account-input" :value="store.userData.companyname" readonly>
           </div>
         </div>
       </div>
@@ -135,7 +139,8 @@ import ATooltip from '@/components/ATooltip.vue';
         <h3 class="setting__header">Звонок через SIP</h3>
         <div class="setting__body setting-body">
           <p class="setting-body__subtitle setting-body__subtitle--sip">
-            Включите эту функцию чтобы Авито и другие площадки не блокировали ваш аккаунт. Будет выглядеть так, будто звонки совершаются с разных номеров.
+            Включите эту функцию чтобы Авито и другие площадки не блокировали ваш аккаунт. Будет выглядеть так, будто
+            звонки совершаются с разных номеров.
           </p>
         </div>
       </div>
@@ -304,5 +309,4 @@ import ATooltip from '@/components/ATooltip.vue';
   &__bottom {
     margin-top: 1.5rem;
   }
-}
-</style>
+}</style>
